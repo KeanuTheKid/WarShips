@@ -8,6 +8,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using System.Threading;
+using System.Runtime.Versioning;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace ConsoleGames.Games;
 
@@ -16,17 +19,17 @@ public class Versenken : Game
     // PUBLIC PROPERTIES
     public override string Name => "Versenken";
     public override string Description => "Erraten Sie die Position der gegnerischen Schiffe.";
-    public override string Rules => "Jedes Schiff hat ein Schuss, bei einem Treffer oder nach der Runde läd es nach.";
+    public override string Rules => "Du hast 5 Schüsse pro Runde, eben so dein Gegner.";
     public override string Credits => "Keanu, kebelode@ksr.ch";
     public override int Year => 2023;
     public override bool TheHigherTheBetter => true;
-    public override int LevelMax => 1;
+    public override int LevelMax => 3;
     public override Score HighScore { get; set; }
     public override Score Play(int level = 1)
     {
-        int Playerlives = 6; //placeholder
-        int Botlives = 6; //placeholder
-        bool WIN = true;
+        int Playerlives = 6;
+        int Botlives = 6;
+        Score score = new Score();
         int stage = 1;
         bool hit = false;
         Point[] PlayerBoats = new Point[] { };
@@ -39,59 +42,79 @@ public class Versenken : Game
         Display.DrawEnemyBoard();
         ClearConsoleArea(0, 25, 120, 10);
         Console.SetCursorPosition(0, 25);
-        while (WIN)
+        while (true)
         {
-            for (int i = 0; i < 1; i++)
-            {
-                Point already_shot = shoot(ref PlayerBoats, ref BotBoats, ref Botlives); //shoot does whole shoot stuff(evaluate, draw)
-            }
-
-            for (int i = 0; i < 5; i++)
-            {
-                bot_shoot(ref PlayerBoats, ref Playerlives); //shoot does whole shoot stuff(evaluate, draw)
-            }
-                
-            
-
-            if (Playerlives == 0)
-            {
-                WIN = false;
-
-            }
-            else if (Botlives == 0)
-            {
-                stage++;
-                Display.DrawEnemyBoard();
-                Console.SetCursorPosition(0, 0);
-                BotBoats=placeBotBoat(); //next
 
 
-            }
-            
-            switch (level)
+            while (Botlives > 0 && Playerlives > 0)
             {
-                case 1:
-                    if (stage == 3)
+                for (int i = 0; i < 6; i++)
+                {
+                    shoot(ref PlayerBoats, ref BotBoats, ref Botlives); //shoot does whole shoot stuff(evaluate, draw)
+                    Console.Write(Botlives);
+                    Console.ReadLine();
+                }
+
+                for (int i = 0; i < 5; i++)
+                {
+                    if (Botlives > 0)
                     {
-                        break;
+                        bot_shoot(ref PlayerBoats, ref Playerlives);
                     }
-                    
-                case 2:
-                    if (stage == 8)
-                    {
-                        break;
-                    }
-                case 3:
-                    if (stage == 12)
-                    {
-                        break;
-                    }
+                }
 
+
+
+                if (Playerlives == 0)
+                {
+                    Display.DrawLoseScreen();
+
+                }
+                else if (Botlives == 0)
+                {
+                    stage++;
+                    Display.DrawEnemyBoard();
+                    Console.SetCursorPosition(0, 0);
+                    BotBoats=placeBotBoat();
+                    Botlives = 6;
+                }
+                switch (level)
+                {
+                    case 1:
+                        if (stage == 3)
+                        {
+                            Display.DrawWinScreen();
+                            Framework(ref Playerlives, ref score);
+                            return score;
+
+                        }
+                        break;
+
+                    case 2:
+                        if (stage == 8)
+                        {
+                            Display.DrawWinScreen();
+                            Framework(ref Playerlives, ref score);
+                            return score;
+
+                        }
+                        break;
+                    case 3:
+                        if (stage == 12)
+                        {
+                            Display.DrawWinScreen();
+                            Framework(ref Playerlives, ref score);
+                            return score;
+
+                        }
+                        break;
+
+                }
             }
-
+            return score;
         }
+        
 
-        return new Score();
     }
     static private Point[] placePlayerBoat()
     {
@@ -166,7 +189,6 @@ public class Versenken : Game
         }
         return valid;
     }
-
     static private Point[] placeBotBoat()
     {
         Random random = new Random();
@@ -200,7 +222,6 @@ public class Versenken : Game
         }
         return botBoatPositions;
     }
-
     static private void PlaceBoatRandomly(Point[] boatPositions, int startIndex, int boatSize, Random random)
     {
         bool placed = false;
@@ -266,7 +287,6 @@ public class Versenken : Game
         }
         return player_input;
     }
-
     static private List<Point> bot_shoot(ref Point[] PlayerBoatPositions, ref int Playerlives)
     {
         Random rand = new Random();
@@ -289,14 +309,14 @@ public class Versenken : Game
             {
                 if (shot.Equals(p))
                 {
-                    Console.WriteLine($"Bot hit at {p.X}, {p.Y}");                    
+                    Console.WriteLine($"Bot hit at {p.X}, {p.Y}");
                     Console.ReadLine();
                     ClearConsoleArea(0, 25, 120, 30);
                     hit = true;
                     Playerlives--;
                     Display.DrawHitShots_Enemy(shot);
                     break;
-                }                                                
+                }
             }
 
             if (!hit)
@@ -328,7 +348,6 @@ public class Versenken : Game
         ClearConsoleArea(0, 25, 120, 30);
         return bot_input;
     }
-
     public static System.Drawing.Point ConvertToPoint(Versenken.Point versenkenPoint)
     {
         return new System.Drawing.Point(versenkenPoint.X, versenkenPoint.Y);
@@ -365,7 +384,6 @@ public class Versenken : Game
         }
         Console.SetCursorPosition(0, 0);
     }
-
     // Point structure (can also use System.Drawing.Point)
     public struct Point
     {
@@ -377,6 +395,11 @@ public class Versenken : Game
             X = x;
             Y = y;
         }
+    }
+    static private void Framework(ref int Playerlifes, ref Score score)
+    {
+        score.Points = Playerlifes;
+        score.LevelCompleted = true;
     }
 }
 
@@ -449,9 +472,6 @@ class Display
         Console.ResetColor();
 
     }
-
-
-
     public static void DrawMissedShots_Player(Versenken.Point missedshots)
     {
 
@@ -511,7 +531,6 @@ class Display
 
 
     }
-
     public static void DrawPlayerBoats(Versenken.Point[] coordinates)
     {
         int xOffset = 14;
@@ -556,6 +575,86 @@ class Display
 ";
         Console.Write(Title);
         Console.SetCursorPosition(0, 0);
+    }
+    public static void DrawWinScreen()
+    {
+        String Title = @"
+               __        ___                        
+               \ \      / (_)_ __  _ __   ___ _ __  
+                \ \ /\ / /| | '_ \| '_ \ / _ \ '__|
+                 \ V  V / | | | | | | | |  __/ |     
+                  \_/\_/  |_|_| |_|_| |_|\___|_|      
+               __        ___                        
+               \ \      / (_)_ __  _ __   ___ _ __  
+                \ \ /\ / /| | '_ \| '_ \ / _ \ '__|
+                 \ V  V / | | | | | | | |  __/ |     
+                  \_/\_/  |_|_| |_|_| |_|\___|_|                                                                                                                                                                                                                                                                                     
+  ____ _     _      _                  _ _                       
+ / ___| |__ (_) ___| | _____ _ __   __| (_)_ __  _ __   ___ _ __ 
+| |   | '_ \| |/ __| |/ / _ \ '_ \ / _` | | '_ \| '_ \ / _ \ '__|
+| |___| | | | | (__|   <  __/ | | | (_| | | | | | | | |  __/ |   
+ \____|_| |_|_|\___|_|\_\___|_| |_|\__,_|_|_| |_|_| |_|\___|_|   
+                                                                                                                                            
+";
+        int x = 0;
+        bool button = true;
+
+        while (button)
+        {
+            Console.Clear();
+            Console.SetCursorPosition(x, 4);
+            Console.Write(Title);
+
+            if (Console.KeyAvailable)
+            {
+                var key = Console.ReadKey(true).Key;//taste unsichtbar
+                if (key == ConsoleKey.Q)
+                {
+                    button = false;
+                }
+            }
+
+            Thread.Sleep(100); // Delay to make the scrolling visible
+        }
+    }
+    public static void DrawLoseScreen()
+    {
+        String Title = @"
+   ____    _    __  __ _____    _____     _______ ____  
+  / ___|  / \  |  \/  | ____|  / _ \ \   / / ____|  _ \ 
+ | |  _  / _ \ | |\/| |  _|   | | | \ \ / /|  _| | |_) |
+ | |_| |/ ___ \| |  | | |___  | |_| |\ V / | |___|  _ < 
+  \____/_/ _ \_\_|  |_|_____|  \___/_ \_/ _|_____|_|_\_\
+  / ___|  / \  |  \/  | ____|  / _ \ \   / / ____|  _ \ 
+ | |  _  / _ \ | |\/| |  _|   | | | \ \ / /|  _| | |_) |
+ | |_| |/ ___ \| |  | | |___  | |_| |\ V / | |___|  _ < 
+  \____/_/ _ \_\_|  |_|_____|  \___/_ \_/ _|_____|_|_\_\
+  / ___|  / \  |  \/  | ____|  / _ \ \   / / ____|  _ \ 
+ | |  _  / _ \ | |\/| |  _|   | | | \ \ / /|  _| | |_) |
+ | |_| |/ ___ \| |  | | |___  | |_| |\ V / | |___|  _ < 
+  \____/_/   \_\_|  |_|_____|  \___/  \_/  |_____|_| \_\
+                                                                                                                                                                          
+";
+        int x = 0;
+        bool button = true;
+
+        while (button)
+        {
+            Console.Clear();
+            Console.SetCursorPosition(x, 4);
+            Console.Write(Title);
+
+            if (Console.KeyAvailable)
+            {
+                var key = Console.ReadKey(true).Key;//taste unsichtbar
+                if (key == ConsoleKey.Q)
+                {
+                    button = false;
+                }
+            }
+
+            Thread.Sleep(100); // Delay to make the scrolling visible
+        }
     }
 }
 class Cursor //falls genug zeit
