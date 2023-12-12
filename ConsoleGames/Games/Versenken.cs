@@ -7,6 +7,7 @@ using System.Reflection.Emit;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
 namespace ConsoleGames.Games;
 
@@ -30,7 +31,7 @@ public class Versenken : Game
         bool hit = false;
         Point[] PlayerBoats = new Point[] { };
         Point[] BotBoats = new Point[] { };
-        Console.SetBufferSize(310, 310); //apple funktioniert nicht??
+        //Console.SetBufferSize(310, 310); //apple funktioniert nicht??
         Display.DrawStartScreen(ref level);
         Display.DrawPlayerBoard();
         BotBoats = placeBotBoat();
@@ -40,22 +41,17 @@ public class Versenken : Game
         Console.SetCursorPosition(0, 25);
         while (WIN)
         {
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 1; i++)
             {
                 Point already_shot = shoot(ref PlayerBoats, ref BotBoats, ref Botlives); //shoot does whole shoot stuff(evaluate, draw)
             }
-            for (int i = 0; i < 1; i++)                               //kann ich auch der "shoot" funktion zweites argument geben "bot" oder "player" und damit nur eine while schleife und eine funktion brauchen???
+
+            for (int i = 0; i < 5; i++)
             {
-                bot_shoot(hit);
-                if (!hit)
-                {
-                    break;
-                }
-                else if (hit)
-                {
-                    Playerlives--; //bzw einfach objekt merken und zerstören 
-                }
+                bot_shoot(ref PlayerBoats, ref Playerlives); //shoot does whole shoot stuff(evaluate, draw)
             }
+                
+            
 
             if (Playerlives == 0)
             {
@@ -71,9 +67,25 @@ public class Versenken : Game
 
 
             }
-            else if (stage == 5)//erstes level 3 stages, zweites 5, drittes 10
+            
+            switch (level)
             {
-                break;
+                case 1:
+                    if (stage == 3)
+                    {
+                        break;
+                    }
+                    
+                case 2:
+                    if (stage == 8)
+                    {
+                        break;
+                    }
+                case 3:
+                    if (stage == 12)
+                    {
+                        break;
+                    }
 
             }
 
@@ -255,11 +267,68 @@ public class Versenken : Game
         return player_input;
     }
 
-    static private bool bot_shoot(bool hit)
+    static private List<Point> bot_shoot(ref Point[] PlayerBoatPositions, ref int Playerlives)
     {
+        Random rand = new Random();
+        List<Point> bot_input = new List<Point>();
 
-        return hit;     //treffer??????
+        while (true) // Keep shooting until a miss occurs
+        {
+            bool hit = false;
+            Console.SetCursorPosition(0, 25);
+            Console.WriteLine("Bot is shooting");
+
+            // Get a random point
+            int x = rand.Next(0, 5);
+            int y = rand.Next(0, 5);
+            Point shot = new Point(x, y);
+            Point last_shot;
+
+            // Check if it hits any player boat
+            foreach (Point p in PlayerBoatPositions)
+            {
+                if (shot.Equals(p))
+                {
+                    Console.WriteLine($"Bot hit at {p.X}, {p.Y}");                    
+                    Console.ReadLine();
+                    ClearConsoleArea(0, 25, 120, 30);
+                    hit = true;
+                    Playerlives--;
+                    Display.DrawHitShots_Enemy(shot);
+                    break;
+                }                                                
+            }
+
+            if (!hit)
+            {
+                Console.WriteLine($"Bot missed{shot.X},{shot.Y} ");
+                Console.ReadLine();
+                ClearConsoleArea(0, 25, 120, 30);
+
+                break;
+            }
+
+            // Add the shot (hit or miss) to bot_input
+            bot_input.Add(shot);
+
+            if (hit)
+            {
+                // Choose a direction for the next shot
+                int direction = rand.Next(0, 4);
+                switch (direction)
+                {
+                    case 0: y = Math.Max(y - 1, 0); break; // Up
+                    case 1: y = Math.Min(y + 1, 4); break; // Down
+                    case 2: x = Math.Max(x - 1, 0); break; // Left
+                    case 3: x = Math.Min(x + 1, 4); break; // Right
+                }
+            }
+        }
+
+        ClearConsoleArea(0, 25, 120, 30);
+        return bot_input;
     }
+
     public static System.Drawing.Point ConvertToPoint(Versenken.Point versenkenPoint)
     {
         return new System.Drawing.Point(versenkenPoint.X, versenkenPoint.Y);
@@ -294,6 +363,7 @@ public class Versenken : Game
                 Console.Write(" "); // Overwrite the current position with a space
             }
         }
+        Console.SetCursorPosition(0, 0);
     }
 
     // Point structure (can also use System.Drawing.Point)
@@ -402,12 +472,23 @@ class Display
 
 
     }
-    public static void DrawMissedShots_Enemy()
+    public static void DrawHitShots_Enemy(Versenken.Point hitshots)
     {
+        // Convert Versenken.Point to System.Drawing.Point
+        System.Drawing.Point drawingPoint = Versenken.ConvertToPoint(hitshots);
+        int xOffset = 14;
+        int yOffset = 10;
+        int xStep = 6;
+        int yStep = 3;
 
-    }
-    public static void DrawHitShots_Enemy()
-    {
+
+
+        int consoleX = xOffset + (drawingPoint.X * xStep);
+        int consoleY = yOffset + (drawingPoint.Y * yStep);
+
+
+        DrawRectangle(2, consoleX, consoleY, ConsoleColor.Magenta);
+
 
     }
     public static void DrawHitShots_Player(Versenken.Point hitshots)

@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\keanu\\OneDrive - Kantonsschule Romanshorn\\schule\\informatik\\EF\\C#\\Schiffeversenken\\Schiffeversenken\\ConsoleGames2023v01\\ConsoleGames\\ConsoleGames.csproj",
+      "projectUniqueName": "C:\\Users\\keanu\\OneDrive - Kantonsschule Romanshorn\\schule\\informatik\\WARSHIPSCODE\\ConsoleGames\\ConsoleGames.csproj",
       "projectName": "ConsoleGames",
-      "projectPath": "C:\\Users\\keanu\\OneDrive - Kantonsschule Romanshorn\\schule\\informatik\\EF\\C#\\Schiffeversenken\\Schiffeversenken\\ConsoleGames2023v01\\ConsoleGames\\ConsoleGames.csproj",
+      "projectPath": "C:\\Users\\keanu\\OneDrive - Kantonsschule Romanshorn\\schule\\informatik\\WARSHIPSCODE\\ConsoleGames\\ConsoleGames.csproj",
       "packagesPath": "C:\\Users\\keanu\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\keanu\\OneDrive - Kantonsschule Romanshorn\\schule\\informatik\\EF\\C#\\Schiffeversenken\\Schiffeversenken\\ConsoleGames2023v01\\ConsoleGames\\obj\\",
+      "outputPath": "C:\\Users\\keanu\\OneDrive - Kantonsschule Romanshorn\\schule\\informatik\\WARSHIPSCODE\\ConsoleGames\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\keanu\\AppData\\Roaming\\NuGet\\NuGet.Config",
