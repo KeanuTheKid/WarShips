@@ -1,0 +1,30 @@
+﻿<Properties StartupConfiguration="{DA17658F-E29E-4FE4-9A6B-995C73075B32}|Default">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.ConsoleGames PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.Workbench ActiveDocument="ConsoleGames/Games/GuessNumber.cs">
+    <Files>
+      <File FileName="ConsoleGames/Program.cs" Line="17" Column="1" />
+      <File FileName="ConsoleGames/Score.cs" Line="1" Column="1" />
+      <File FileName="ConsoleGames/Game.cs" Line="1" Column="1" />
+      <File FileName="ConsoleGames/Games/GuessNumber.cs" Line="72" Column="6" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="ConsoleGames" expanded="True">
+            <Node name="ConsoleGames">
+              <Node name="Games">
+                <Node name="GuessNumber.cs" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
