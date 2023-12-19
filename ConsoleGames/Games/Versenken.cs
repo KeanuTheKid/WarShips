@@ -31,11 +31,11 @@ public class Versenken : Game
         int Botlives = 6;
         Score score = new Score();
         int stage = 1;
-        bool hit = false;
+        bool Completed = false;
         Point[] PlayerBoats = new Point[] { };
         Point[] BotBoats = new Point[] { };
         //Console.SetBufferSize(310, 310); //apple funktioniert nicht??
-        Display.DrawStartScreen(ref level);
+        Display.DrawStartScreen(ref level, ref stage);
         Display.DrawPlayerBoard();
         BotBoats = placeBotBoat();
         PlayerBoats = placePlayerBoat();
@@ -48,101 +48,123 @@ public class Versenken : Game
 
             while (Botlives > 0 && Playerlives > 0)
             {
-                for (int i = 0; i < 6; i++)
-                {
-                    shoot(ref PlayerBoats, ref BotBoats, ref Botlives); //shoot does whole shoot stuff(evaluate, draw)
-                    Console.Write(Botlives);
-                    Console.ReadLine();
-                }
-
-                for (int i = 0; i < 5; i++)
-                {
-                    if (Botlives > 0)
+                
+                    for (int i = 0; i < 6; i++)
                     {
-                        bot_shoot(ref PlayerBoats, ref Playerlives);
+                        shoot(ref PlayerBoats, ref BotBoats, ref Botlives); //shoot does whole shoot stuff(evaluate, draw)
+                        if (Botlives <= 0)
+                        {
+                            Completed = true;
+                            WIN(ref Botlives, ref Playerlives, ref BotBoats, ref stage, ref level, ref score, ref Completed);
+                            break;
+                        }
+
+
+
                     }
-                }
-
-
-
-                if (Playerlives == 0)
+                if (score.LevelCompleted == true)
                 {
-                    Display.DrawLoseScreen();
-
+                    break;
                 }
-                else if (Botlives == 0)
-                {
-                    stage++;
-                    Display.DrawEnemyBoard();
-                    Console.SetCursorPosition(0, 0);
-                    BotBoats=placeBotBoat();
-                    Botlives = 6;
-                }
-                switch (level)
-                {
-                    case 1:
-                        if (stage == 3)
+                
+                    for (int i = 0; i < 6; i++)
+                    {
+                        if (Botlives > 0)
                         {
-                            Display.DrawWinScreen();
-                            Framework(ref Playerlives, ref score);
-                            return score;
-
+                            bot_shoot(ref PlayerBoats, ref Playerlives);
+                            if (Playerlives <= 0)
+                            {
+                            score.Points = Playerlives;
+                            score.LevelCompleted = false;
+                            Display.DrawLoseScreen();
+                                break;
+                            }
                         }
-                        break;
-
-                    case 2:
-                        if (stage == 8)
-                        {
-                            Display.DrawWinScreen();
-                            Framework(ref Playerlives, ref score);
-                            return score;
-
-                        }
-                        break;
-                    case 3:
-                        if (stage == 12)
-                        {
-                            Display.DrawWinScreen();
-                            Framework(ref Playerlives, ref score);
-                            return score;
-
-                        }
-                        break;
-
-                }
+                    }
             }
-            return score;
+            break;
         }
+        level++;
+        return score;
         
 
     }
+    static private Score WIN(ref int Botlives, ref int Playerlives, ref Point[] BotBoats, ref int stage, ref int level, ref Score score, ref bool Completed )
+    {
+         
+            stage++;
+            Display.DrawStage(ref stage);
+            Display.DrawEnemyBoard();
+            Console.SetCursorPosition(0, 0);
+            BotBoats=placeBotBoat();
+            Botlives = 6;
+        
+        switch (level)
+        {
+            case 1:
+                if (stage == 3)// 2 wellen
+                {
+                   
+                    Framework(ref Playerlives, ref score);
+                    Display.DrawWinScreen();
+                    return score;
+
+                }
+                break;
+
+            case 2:
+                if (stage == 8)// 7 wellen
+                {
+                   
+                    Framework(ref Playerlives, ref score);
+                    Display.DrawWinScreen();
+                    return score;
+
+                }
+                break;
+            case 3:
+                if (stage == 12)// 11 wellen
+                {
+                    
+                    Framework(ref Playerlives, ref score);
+                    Display.DrawWinScreen();                    
+                    return score;
+
+                }
+                break;
+        }
+        return score;
+    } 
     static private Point[] placePlayerBoat()
     {
         int numberOfObjectives = 6; // Total squares occupied by all boats
 
         Console.SetCursorPosition(0, 25);
-        Console.WriteLine("Place your boats. You got one galleon (3 squares), one brigantine (2 squares) and one sloop (1 square)");
+        Console.WriteLine("Place your boats. You got one galleon (3 squares), one brigantine (2 squares) and one sloop (1 square).");
         bool valid = true;
         Point[] PlayerBoatPositions = new Point[numberOfObjectives];
         while (valid)
         {
             // Place galleon (3 squares)
-            Console.WriteLine("Place your galleon:");
+            Console.WriteLine("Place your galleon: Part (1/3)");
             for (int i = 0; i < 3; i++)
             {
                 PlayerBoatPositions[i] = ReadCoordinates();
+                Console.WriteLine($"Part ({i+2}/3)");
+
             }
 
 
             // Place brigantine (2 squares)
-            Console.WriteLine("Place your brigantine:");
+            Console.WriteLine($"Place your brigantine: Part (1/2)");
             for (int i = 0; i < 2; i++)
             {
                 PlayerBoatPositions[3 + i] = ReadCoordinates();
+                Console.WriteLine($"Part ({i+2}/2)");
             }
 
             // Place sloop (1 square)
-            Console.WriteLine("Place your sloop:");
+            Console.WriteLine("Place your sloop: Part (1/1)");
             PlayerBoatPositions[5] = ReadCoordinates();
             if (CheckObjectDistanceANDDoubleCords(PlayerBoatPositions))
             {
@@ -265,7 +287,7 @@ public class Versenken : Game
         {
             if (player_input.Equals(p)) // Check if the player's input matches any point in BotBoatsPositions
             {
-                Console.WriteLine("Hit!");
+                Console.WriteLine("Hit! Press ENTER to continue");
                 Console.ReadLine();
                 hit = true;
                 ClearConsoleArea(0, 25, 120, 30);
@@ -278,7 +300,7 @@ public class Versenken : Game
 
         if (!hit)
         {
-            Console.WriteLine("Miss!");
+            Console.WriteLine("Miss! Press ENTER to continue");
             Console.ReadLine();
             ClearConsoleArea(0, 25, 120, 30);
             Display.DrawMissedShots_Player(player_input);
@@ -296,20 +318,18 @@ public class Versenken : Game
         {
             bool hit = false;
             Console.SetCursorPosition(0, 25);
-            Console.WriteLine("Bot is shooting");
+            Console.WriteLine("Bot is shooting...");
 
-            // Get a random point
             int x = rand.Next(0, 5);
             int y = rand.Next(0, 5);
             Point shot = new Point(x, y);
-            Point last_shot;
 
             // Check if it hits any player boat
             foreach (Point p in PlayerBoatPositions)
             {
                 if (shot.Equals(p))
                 {
-                    Console.WriteLine($"Bot hit at {p.X}, {p.Y}");
+                    Console.WriteLine($"Bot hit at {p.X}, {p.Y} Press ENTER to continue");
                     Console.ReadLine();
                     ClearConsoleArea(0, 25, 120, 30);
                     hit = true;
@@ -321,7 +341,7 @@ public class Versenken : Game
 
             if (!hit)
             {
-                Console.WriteLine($"Bot missed{shot.X},{shot.Y} ");
+                Console.WriteLine($"Bot missed{shot.X},{shot.Y} Press ENTER to continue");
                 Console.ReadLine();
                 ClearConsoleArea(0, 25, 120, 30);
 
@@ -396,10 +416,11 @@ public class Versenken : Game
             Y = y;
         }
     }
-    static private void Framework(ref int Playerlifes, ref Score score)
+    static private void Framework(ref int Playerlives, ref Score score)
     {
-        score.Points = Playerlifes;
+        score.Points = Playerlives;
         score.LevelCompleted = true;
+        score.Level++;
     }
 }
 
@@ -563,7 +584,7 @@ class Display
         }
         Console.ResetColor();
     }
-    public static void DrawStartScreen(ref int level)
+    public static void DrawStartScreen(ref int level, ref int stage)
     {
         String Title = @"
                     ____        _   _   _      ____  _     _           
@@ -574,7 +595,14 @@ class Display
                                                             |_|        
 ";
         Console.Write(Title);
-        Console.SetCursorPosition(0, 0);
+        DrawStage(ref stage);
+
+    }
+    public static void DrawStage(ref int stage)
+    {
+        Console.SetCursorPosition(80, 2);
+        Console.Write("Stage:");
+        Console.Write(stage);
     }
     public static void DrawWinScreen()
     {
