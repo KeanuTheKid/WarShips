@@ -40,7 +40,7 @@ public class Versenken : Game
         BotBoats = placeBotBoat();
         PlayerBoats = placePlayerBoat();
         Display.DrawEnemyBoard();
-        ClearConsoleArea(0, 25, 120, 10);
+        ClearConsoleArea(0, 25, 120, 80);
         Console.SetCursorPosition(0, 25);
         while (true)
         {
@@ -49,7 +49,7 @@ public class Versenken : Game
             while (Botlives > 0 && Playerlives > 0)
             {
                 
-                    for (int i = 0; i < 6; i++)
+                    for (int i = 0; i < 5; i++)
                     {
                         shoot(ref PlayerBoats, ref BotBoats, ref Botlives); //shoot does whole shoot stuff(evaluate, draw)
                         if (Botlives <= 0)
@@ -67,7 +67,7 @@ public class Versenken : Game
                     break;
                 }
                 
-                    for (int i = 0; i < 6; i++)
+                    for (int i = 0; i < 5; i++)
                     {
                         if (Botlives > 0)
                         {
@@ -86,8 +86,6 @@ public class Versenken : Game
         }
         level++;
         return score;
-        
-
     }
     static private Score WIN(ref int Botlives, ref int Playerlives, ref Point[] BotBoats, ref int stage, ref int level, ref Score score, ref bool Completed )
     {
@@ -113,7 +111,7 @@ public class Versenken : Game
                 break;
 
             case 2:
-                if (stage == 8)// 7 wellen
+                if (stage == 4)// 3 wellen
                 {
                    
                     Framework(ref Playerlives, ref score);
@@ -123,7 +121,7 @@ public class Versenken : Game
                 }
                 break;
             case 3:
-                if (stage == 12)// 11 wellen
+                if (stage == 6)// 5 wellen
                 {
                     
                     Framework(ref Playerlives, ref score);
@@ -140,7 +138,7 @@ public class Versenken : Game
         int numberOfObjectives = 6; // Total squares occupied by all boats
 
         Console.SetCursorPosition(0, 25);
-        Console.WriteLine("Place your boats. You got one galleon (3 squares), one brigantine (2 squares) and one sloop (1 square).");
+        Console.WriteLine("Place your boats. You got one galleon (3 squares), one brigantine (2 squares) and one sloop (1 square). Format: (X,Y)");
         bool valid = true;
         Point[] PlayerBoatPositions = new Point[numberOfObjectives];
         while (valid)
@@ -238,10 +236,10 @@ public class Versenken : Game
                 Array.Clear(botBoatPositions, 0, numberOfObjectives);
             }
         }
-        foreach (Point p in botBoatPositions)
-        {
-            Console.WriteLine($"x,y: ({p.X}, {p.Y})");
-        }
+        //foreach (Point p in botBoatPositions)
+       // {
+       //     Console.WriteLine($"x,y: ({p.X}, {p.Y})");
+       // }
         return botBoatPositions;
     }
     static private void PlaceBoatRandomly(Point[] boatPositions, int startIndex, int boatSize, Random random)
@@ -278,10 +276,25 @@ public class Versenken : Game
     }
     static private Point shoot(ref Point[] PlayerBoatPositions, ref Point[] BotBoatsPositions, ref int Botlives)
     {
-        bool hit = false;
-        Console.SetCursorPosition(0, 25);
-        Console.WriteLine("Shoot your shot");
-        Point player_input = ReadCoordinates();
+        Point player_input;
+        bool hit;
+        while (true)
+        {
+            hit = false;
+            Console.SetCursorPosition(0, 25);
+            Console.WriteLine("Shoot your shot (X,Y)");
+            player_input = ReadCoordinates();
+            if (player_input.X > 4 || player_input.Y > 4 || player_input.X < 0 || player_input.Y < 0)
+            {
+                Console.WriteLine("Your shot is outside of the battlefield! Press ENTER to continue");
+                Console.ReadLine();
+                ClearConsoleArea(0, 25, 120, 80);
+            }
+            else
+            {
+                break;
+            }
+        }
 
         foreach (Point p in BotBoatsPositions)
         {
@@ -290,7 +303,7 @@ public class Versenken : Game
                 Console.WriteLine("Hit! Press ENTER to continue");
                 Console.ReadLine();
                 hit = true;
-                ClearConsoleArea(0, 25, 120, 30);
+                ClearConsoleArea(0, 25, 120, 80);
                 Display.DrawHitShots_Player(player_input);
                 Botlives--;
 
@@ -302,7 +315,7 @@ public class Versenken : Game
         {
             Console.WriteLine("Miss! Press ENTER to continue");
             Console.ReadLine();
-            ClearConsoleArea(0, 25, 120, 30);
+            ClearConsoleArea(0, 25, 120, 80);
             Display.DrawMissedShots_Player(player_input);
 
 
@@ -314,12 +327,11 @@ public class Versenken : Game
         Random rand = new Random();
         List<Point> bot_input = new List<Point>();
 
-        while (true) // Keep shooting until a miss occurs
+        while (true) 
         {
             bool hit = false;
             Console.SetCursorPosition(0, 25);
             Console.WriteLine("Bot is shooting...");
-
             int x = rand.Next(0, 5);
             int y = rand.Next(0, 5);
             Point shot = new Point(x, y);
@@ -331,7 +343,7 @@ public class Versenken : Game
                 {
                     Console.WriteLine($"Bot hit at {p.X}, {p.Y} Press ENTER to continue");
                     Console.ReadLine();
-                    ClearConsoleArea(0, 25, 120, 30);
+                    ClearConsoleArea(0, 25, 120, 80);
                     hit = true;
                     Playerlives--;
                     Display.DrawHitShots_Enemy(shot);
@@ -341,14 +353,14 @@ public class Versenken : Game
 
             if (!hit)
             {
-                Console.WriteLine($"Bot missed{shot.X},{shot.Y} Press ENTER to continue");
+                Console.WriteLine($"Bot missed at {shot.X},{shot.Y} Press ENTER to continue");
                 Console.ReadLine();
-                ClearConsoleArea(0, 25, 120, 30);
+                ClearConsoleArea(0, 25, 120, 80);
 
                 break;
             }
 
-            // Add the shot (hit or miss) to bot_input
+            // Add the shot to bot_input
             bot_input.Add(shot);
 
             if (hit)
@@ -365,7 +377,7 @@ public class Versenken : Game
             }
         }
 
-        ClearConsoleArea(0, 25, 120, 30);
+        ClearConsoleArea(0, 25, 120, 80);
         return bot_input;
     }
     public static System.Drawing.Point ConvertToPoint(Versenken.Point versenkenPoint)
@@ -407,7 +419,7 @@ public class Versenken : Game
     // Point structure (can also use System.Drawing.Point)
     public struct Point
     {
-        public int X { get; }
+        public int X { get; } //get = schreibschutz, kann nur innerhalb der konstruktoren verändert werden
         public int Y { get; }
 
         public Point(int x, int y)      //chatgpt
@@ -426,7 +438,7 @@ public class Versenken : Game
 
 class Display
 {
-    static public void DrawPlayerBoard()
+    static internal void DrawPlayerBoard()
     {
         int CellHeight = 2;
         int LineHeight = 3;
@@ -456,11 +468,8 @@ class Display
         }
         Console.SetCursorPosition(0, 0);
         Console.ResetColor();
-
-
-
     }
-    static public void DrawEnemyBoard()
+    static internal void DrawEnemyBoard()
     {
         int CellHeight = 2;
         int LineHeight = 3;
@@ -493,7 +502,7 @@ class Display
         Console.ResetColor();
 
     }
-    public static void DrawMissedShots_Player(Versenken.Point missedshots)
+    internal static void DrawMissedShots_Player(Versenken.Point missedshots)
     {
 
         // Convert Versenken.Point to System.Drawing.Point
@@ -503,17 +512,12 @@ class Display
         int xStep = 6;
         int yStep = 3;
 
-
-
         int consoleX = xOffset + (drawingPoint.X * xStep);
         int consoleY = yOffset + (drawingPoint.Y * yStep);
-
 
         DrawRectangle(2, consoleX+36, consoleY, ConsoleColor.Cyan);
-
-
     }
-    public static void DrawHitShots_Enemy(Versenken.Point hitshots)
+    internal static void DrawHitShots_Enemy(Versenken.Point hitshots)
     {
         // Convert Versenken.Point to System.Drawing.Point
         System.Drawing.Point drawingPoint = Versenken.ConvertToPoint(hitshots);
@@ -522,17 +526,12 @@ class Display
         int xStep = 6;
         int yStep = 3;
 
-
-
         int consoleX = xOffset + (drawingPoint.X * xStep);
         int consoleY = yOffset + (drawingPoint.Y * yStep);
-
 
         DrawRectangle(2, consoleX, consoleY, ConsoleColor.Magenta);
-
-
     }
-    public static void DrawHitShots_Player(Versenken.Point hitshots)
+    internal static void DrawHitShots_Player(Versenken.Point hitshots)
     {
 
         // Convert Versenken.Point to System.Drawing.Point
@@ -542,17 +541,12 @@ class Display
         int xStep = 6;
         int yStep = 3;
 
-
-
         int consoleX = xOffset + (drawingPoint.X * xStep);
         int consoleY = yOffset + (drawingPoint.Y * yStep);
 
-
         DrawRectangle(2, consoleX+36, consoleY, ConsoleColor.Magenta);
-
-
     }
-    public static void DrawPlayerBoats(Versenken.Point[] coordinates)
+    internal static void DrawPlayerBoats(Versenken.Point[] coordinates)
     {
         int xOffset = 14;
         int yOffset = 10;
@@ -568,7 +562,7 @@ class Display
             DrawRectangle(2, consoleX, consoleY, ConsoleColor.DarkGreen);
         }
     }
-    public static void DrawRectangle(int cellHeight, int currentPos_x, int currentPos_y, ConsoleColor COLOR)
+    internal static void DrawRectangle(int cellHeight, int currentPos_x, int currentPos_y, ConsoleColor COLOR)
     {
         int cellWidth = 2 * cellHeight;
 
@@ -584,7 +578,7 @@ class Display
         }
         Console.ResetColor();
     }
-    public static void DrawStartScreen(ref int level, ref int stage)
+    internal static void DrawStartScreen(ref int level, ref int stage)
     {
         String Title = @"
                     ____        _   _   _      ____  _     _           
@@ -598,13 +592,13 @@ class Display
         DrawStage(ref stage);
 
     }
-    public static void DrawStage(ref int stage)
+    internal static void DrawStage(ref int stage)
     {
         Console.SetCursorPosition(80, 2);
         Console.Write("Stage:");
         Console.Write(stage);
     }
-    public static void DrawWinScreen()
+    internal static void DrawWinScreen()
     {
         String Title = @"
                __        ___                        
@@ -645,7 +639,7 @@ class Display
             Thread.Sleep(100); // Delay to make the scrolling visible
         }
     }
-    public static void DrawLoseScreen()
+    internal static void DrawLoseScreen()
     {
         String Title = @"
    ____    _    __  __ _____    _____     _______ ____  
@@ -684,8 +678,4 @@ class Display
             Thread.Sleep(100); // Delay to make the scrolling visible
         }
     }
-}
-class Cursor //falls genug zeit
-{
-
 }
