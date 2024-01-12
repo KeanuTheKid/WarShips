@@ -12,7 +12,8 @@ namespace ConsoleGames
         static Game[] gameArray = new Game[] {
             new Games.GuessNumber(),
             new Games.HangMan(),
-            new Games.Versenken()
+            new Games.Versenken(),
+            new Games.Wordle()
         };
 
         static Game currentGame;

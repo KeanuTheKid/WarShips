@@ -46,7 +46,7 @@ public class Versenken : Game
                     if (Botlives <= 0)
                     {
                         Completed = true;
-                        _=WIN(ref Botlives, ref Playerlives, ref BotBoats, ref stage, ref level, ref score, ref Completed);
+                        _=WIN(ref Botlives, ref Playerlives, ref BotBoats, ref stage, ref level, ref score, ref Completed, ref play);
                         break;
                     }
                 }
@@ -65,6 +65,7 @@ public class Versenken : Game
                             score.Points = Playerlives;
                             score.LevelCompleted = false;
                             Display.DrawLoseScreen();
+                            play = false;
                             break;
                         }
                     }
@@ -75,7 +76,7 @@ public class Versenken : Game
         level++;
         return score;
     }
-    static private Score WIN(ref int Botlives, ref int Playerlives, ref Point[] BotBoats, ref int stage, ref int level, ref Score score, ref bool Completed)
+    static private Score WIN(ref int Botlives, ref int Playerlives, ref Point[] BotBoats, ref int stage, ref int level, ref Score score, ref bool Completed, ref bool play)
     {
 
         stage++;
@@ -93,7 +94,8 @@ public class Versenken : Game
 
                     Framework(ref Playerlives, ref score);
                     Display.DrawWinScreen();
-                    return score;
+                    play = false;
+                    
 
                 }
                 break;
@@ -103,8 +105,8 @@ public class Versenken : Game
                 {
 
                     Framework(ref Playerlives, ref score);
-                    Display.DrawWinScreen();
-                    return score;
+                    Display.DrawWinScreen(); 
+                    play = false;
 
                 }
                 break;
@@ -114,7 +116,7 @@ public class Versenken : Game
 
                     Framework(ref Playerlives, ref score);
                     Display.DrawWinScreen();
-                    return score;
+                    play = false;
 
                 }
                 break;
