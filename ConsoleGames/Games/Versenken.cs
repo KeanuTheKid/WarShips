@@ -1,18 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.Design;
-using System.Security.Principal;
-using System;
-using System.Linq;
-using System.Reflection.Emit;
-using System.ComponentModel;
-using System.Drawing;
-using System.Runtime.CompilerServices;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
-using System.Runtime.Versioning;
-using static System.Formats.Asn1.AsnWriter;
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography.X509Certificates;
 
 namespace ConsoleGames.Games;
 
@@ -34,12 +23,12 @@ public class Versenken : Game
         Score score = new Score();
         int stage = 1;
         bool Completed = false;
-        Point[] PlayerBoats = new Point[] { };
-        Point[] BotBoats = new Point[] { };
+        _ = new Point[] { };
+        _ = new Point[] { };
         Display.DrawStartScreen(ref level, ref stage);
         Display.DrawPlayerBoard();
-        BotBoats = placeBotBoat();
-        PlayerBoats = placePlayerBoat();
+        Point[] BotBoats = placeBotBoat();
+        Point[] PlayerBoats = placePlayerBoat();
         Display.DrawEnemyBoard();
         ClearConsoleArea(0, 25, 120, 80);
         Console.SetCursorPosition(0, 25);
@@ -53,11 +42,11 @@ public class Versenken : Game
 
                 for (int i = 0; i < 5; i++)
                 {
-                    shoot(ref PlayerBoats, ref BotBoats, ref Botlives, ref play); //shoot does whole shoot stuff(evaluate, draw)
+                   /*clean up hat da so "_" gemacht, was ist das?*/ _=shoot(ref PlayerBoats, ref BotBoats, ref Botlives, ref play); //shoot does whole shoot stuff(evaluate, draw)
                     if (Botlives <= 0)
                     {
                         Completed = true;
-                        WIN(ref Botlives, ref Playerlives, ref BotBoats, ref stage, ref level, ref score, ref Completed);
+                        _=WIN(ref Botlives, ref Playerlives, ref BotBoats, ref stage, ref level, ref score, ref Completed);
                         break;
                     }
                 }
@@ -70,7 +59,7 @@ public class Versenken : Game
                 {
                     if (Botlives > 0)
                     {
-                        bot_shoot(ref PlayerBoats, ref Playerlives);
+                        _=bot_shoot(ref PlayerBoats, ref Playerlives);
                         if (Playerlives <= 0)
                         {
                             score.Points = Playerlives;
@@ -204,13 +193,13 @@ public class Versenken : Game
     {
         Random random = new Random();
         int numberOfObjectives = 6; //squares occupied by all boats
-        Point[] botBoatPositions = new Point[numberOfObjectives]; 
+        Point[] botBoatPositions = new Point[numberOfObjectives];
         bool valid = false;
 
         while (!valid) //versucht boote zu platzieren bis Check... true gibt
         {
             // Place galleon (3 squares)
-            PlaceBoatRandomly(botBoatPositions, 0, 3, random); 
+            PlaceBoatRandomly(botBoatPositions, 0, 3, random);
 
             // Place brigantine (2 squares)
             PlaceBoatRandomly(botBoatPositions, 3, 2, random);
@@ -239,7 +228,7 @@ public class Versenken : Game
         bool placed = false;
         while (!placed)
         {
-            int x = random.Next(0, 5); 
+            int x = random.Next(0, 5);
             int y = random.Next(0, 5);
             bool horizontal = random.Next(2) == 0; //hoch oder runter
 
@@ -248,7 +237,7 @@ public class Versenken : Game
             {
                 int checkX = horizontal ? x + i : x; //wenn horizontal, erhöhe x sont bleibe bei x
                 int checkY = horizontal ? y : y + i;    //wenn horizontal, bleibe bei y sonst erhöhe y
-               
+
                 // Überprüfe, ob das segment außerhalb des Spielfelds oder bereits belegt ist
                 if (checkX >= 5 || checkY >= 5 || boatPositions.Contains(new Point(checkX, checkY)))
                 {
@@ -294,7 +283,7 @@ public class Versenken : Game
             if (player_input.Equals(p)) // check botposition == input ??
             {
                 Console.WriteLine("Hit! Press ENTER to continue");
-                Console.ReadLine();
+                _=Console.ReadLine();
                 hit = true;
                 ClearConsoleArea(0, 25, 120, 80);
                 Display.DrawHitShots_Player(player_input);
@@ -307,7 +296,7 @@ public class Versenken : Game
         if (!hit)
         {
             Console.WriteLine("Miss! Press ENTER to continue");
-            Console.ReadLine();
+            _=Console.ReadLine();
             ClearConsoleArea(0, 25, 120, 80);
             Display.DrawMissedShots_Player(player_input);
 
@@ -335,7 +324,7 @@ public class Versenken : Game
                 if (shot.Equals(p))
                 {
                     Console.WriteLine($"Bot hit at {p.X}, {p.Y} Press ENTER to continue");
-                    Console.ReadLine();
+                    _=Console.ReadLine();
                     ClearConsoleArea(0, 25, 120, 80);
                     hit = true;
                     Playerlives--;
@@ -347,7 +336,7 @@ public class Versenken : Game
             if (!hit) // wenn nicht getroffen neue random cords
             {
                 Console.WriteLine($"Bot missed at {shot.X},{shot.Y} Press ENTER to continue");
-                Console.ReadLine();
+                _=Console.ReadLine();
                 ClearConsoleArea(0, 25, 120, 80);
 
                 break;
@@ -362,10 +351,10 @@ public class Versenken : Game
                 int direction = rand.Next(0, 4);
                 switch (direction)
                 {
-                    case 0: y = Math.Max(y - 1, 0); break; // Up
-                    case 1: y = Math.Min(y + 1, 4); break; // Down
-                    case 2: x = Math.Max(x - 1, 0); break; // Left
-                    case 3: x = Math.Min(x + 1, 4); break; // Right
+                    case 0: _ = Math.Max(y - 1, 0); break; // Up
+                    case 1: _ = Math.Min(y + 1, 4); break; // Down
+                    case 2: _ = Math.Max(x - 1, 0); break; // Left
+                    case 3: _ = Math.Min(x + 1, 4); break; // Right
                 }
             }
         }
@@ -389,7 +378,7 @@ public class Versenken : Game
                 && int.TryParse(parts[0], out int x)
                 && int.TryParse(parts[1], out int y))
             {
-                return new Point(x, y); 
+                return new Point(x, y);
             }
             else
             {
@@ -435,7 +424,7 @@ public class Versenken : Game
     {
         score.Points = Playerlives;
         score.LevelCompleted = true;
-        score.Level++;
+        //score.Level++;
     }
 }
 
@@ -598,8 +587,7 @@ class Display
     internal static void DrawStage(ref int stage)
     {
         Console.SetCursorPosition(80, 2);
-        Console.Write("Stage:");
-        Console.Write(stage);
+        Console.Write("Stage: " + stage);
     }
     internal static void DrawWinScreen()
     {
@@ -682,5 +670,3 @@ class Display
 
     }
 }
-
-
