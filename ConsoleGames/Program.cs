@@ -1,6 +1,7 @@
 ﻿using ConsoleGames.Games;
 using System;
 using System.IO;
+using System.Threading;
 
 // Update Framework: Right click on ConsoleGames on Projektmappe / Eigenschaften / Allgemein / Zielframework
 
@@ -20,8 +21,26 @@ namespace ConsoleGames
 
         static void StartScreen()
         {
-            Console.WriteLine("Cooler Start Screen muss noch implementiert werden.");
-            Console.WriteLine("Drücke eine Taste, um zum Startmenu zu gelangen.");
+            Console.WriteLine("Bitte aktiviere den Vollbildmodus für die beste Erfahrung.");
+            Console.ReadKey();
+
+            string[] asciiArtLines = new string[]
+            {
+        "███████╗███████╗     ██████╗ ██████╗ ███╗   ██╗███████╗ ██████╗ ██╗     ███████╗ ██████╗  █████╗ ███╗   ███╗███████╗███████╗██╗",
+        " ██╔════╝██╔════╝    ██╔════╝██╔═══██╗████╗  ██║██╔════╝██╔═══██╗██║     ██╔════╝██╔════╝ ██╔══██╗████╗ ████║██╔════╝██╔════╝██║",
+        " █████╗  █████╗      ██║     ██║   ██║██╔██╗ ██║███████╗██║   ██║██║     █████╗  ██║  ███╗███████║██╔████╔██║█████╗  ███████╗██║",
+        " ██╔══╝  ██╔══╝      ██║     ██║   ██║██║╚██╗██║╚════██║██║   ██║██║     ██╔══╝  ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  ╚════██║╚═╝",
+        " ███████╗██║         ╚██████╗╚██████╔╝██║ ╚████║███████║╚██████╔╝███████╗███████╗╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗███████║██╗",
+        " ╚══════╝╚═╝          ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝╚═╝"
+            };
+
+            foreach (string line in asciiArtLines)
+            {
+                Console.WriteLine(line);
+                Thread.Sleep(500); 
+            }
+
+            Console.WriteLine("\nDrücke eine Taste, um fortzufahren.");
             Console.ReadKey();
             StartMenu();
         }

@@ -175,13 +175,6 @@ public class Versenken : Game
                 Array.Clear(PlayerBoatPositions, 0, numberOfObjectives);
             }
         }
-
-
-        //foreach (Point p in PlayerBoatPositions)
-        //{
-        //    Console.WriteLine($"x,y: ({p.X}, {p.Y})");
-        //}
-
         return PlayerBoatPositions;
     }
     private static double CalculateDistance(Point p1, Point p2)
@@ -212,7 +205,7 @@ public class Versenken : Game
     static private Point[] placeBotBoat()
     {
         Random random = new Random();
-        int numberOfObjectives = 6; // Total squares occupied by all boats
+        int numberOfObjectives = 6; //squares occupied by all boats
         Point[] botBoatPositions = new Point[numberOfObjectives];
         bool valid = false;
 
@@ -236,6 +229,7 @@ public class Versenken : Game
                 Array.Clear(botBoatPositions, 0, numberOfObjectives);
             }
         }
+        //nützlich falls Sie schnell gewinnen wollen...
         //foreach (Point p in botBoatPositions)
        // {
        //     Console.WriteLine($"x,y: ({p.X}, {p.Y})");
@@ -298,7 +292,7 @@ public class Versenken : Game
 
         foreach (Point p in BotBoatsPositions)
         {
-            if (player_input.Equals(p)) // Check if the player's input matches any point in BotBoatsPositions
+            if (player_input.Equals(p)) // check botposition == input ??
             {
                 Console.WriteLine("Hit! Press ENTER to continue");
                 Console.ReadLine();
@@ -411,7 +405,7 @@ public class Versenken : Game
             for (int x = startX; x < startX + width; x++)
             {
                 Console.SetCursorPosition(x, y);
-                Console.Write(" "); // Overwrite the current position with a space
+                Console.Write(" "); 
             }
         }
         Console.SetCursorPosition(0, 0);
@@ -422,7 +416,7 @@ public class Versenken : Game
         public int X { get; } //get = schreibschutz, kann nur innerhalb der konstruktoren verändert werden
         public int Y { get; }
 
-        public Point(int x, int y)      //chatgpt
+        public Point(int x, int y)   
         {
             X = x;
             Y = y;
@@ -636,7 +630,7 @@ class Display
                 }
             }
 
-            Thread.Sleep(100); // Delay to make the scrolling visible
+            Thread.Sleep(100); 
         }
     }
     internal static void DrawLoseScreen()
@@ -675,7 +669,7 @@ class Display
                 }
             }
 
-            Thread.Sleep(100); // Delay to make the scrolling visible
+            Thread.Sleep(100); 
         }
     }
 }
